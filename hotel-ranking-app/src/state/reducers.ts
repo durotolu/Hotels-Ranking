@@ -10,11 +10,34 @@ import {
 export interface State {
   hotels: Array<any>;
   categories: [];
+  hotelModalIsOpen: boolean;
 }
 
 export const getInitialState = (): State => ({
-  hotels: [],
+  hotels: [
+    {
+      name: "Some Hotle",
+      country: "Nigeria",
+      address: "123 Adr road",
+    },
+    {
+      name: "Some Hotle",
+      country: "Nigeria",
+      address: "123 Adr road",
+    },
+    {
+      name: "Some Hotle",
+      country: "Nigeria",
+      address: "123 Adr road",
+    },
+    {
+      name: "Some Hotle",
+      country: "Nigeria",
+      address: "123 Adr road",
+    },
+  ],
   categories: [],
+  hotelModalIsOpen: false
 });
 
 export const appSlice = createSlice({
@@ -24,11 +47,11 @@ export const appSlice = createSlice({
     click: (state, { payload }: PayloadAction<any>) => {
       // console.log("state", state.hotels)
       // console.log("payload", payload)
-      state.hotels = [
-        ...state.hotels,
-        payload
-      ]
-    }
+      state.hotels = [...state.hotels, payload];
+    },
+    toggleHotelModal: (state) => {
+      state.hotelModalIsOpen = !state.hotelModalIsOpen;
+    },
   },
 });
 
