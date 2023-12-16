@@ -17,12 +17,14 @@ export default function Filter() {
   };
   const handleSelect = (id: string) => {
     dispatch(actions.setFilter(id));
-    setAnchorEl(null)
+    setAnchorEl(null);
   };
 
-  const { categories, filterBy } = useSelector(({ app: { categories, filterBy } }: RootState) => ({
+  const { categories } = useSelector(({ app: { categories } }: RootState) => ({
     categories,
-    filterBy
+  }));
+  const { filterBy } = useSelector(({ app: { filterBy } }: RootState) => ({
+    filterBy,
   }));
 
   return (
@@ -34,7 +36,7 @@ export default function Filter() {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         variant="outlined"
-        style={{minWidth: "200px"}}
+        style={{ minWidth: "200px" }}
       >
         Filter {filterBy && `(${filterBy})`}
       </Button>
@@ -49,7 +51,9 @@ export default function Filter() {
       >
         <MenuItem onClick={() => handleSelect("")}>All</MenuItem>
         {categories.map(({ name, id }) => (
-          <MenuItem key={id} onClick={() => handleSelect(id)}>{name}</MenuItem>
+          <MenuItem key={id} onClick={() => handleSelect(id)}>
+            {name}
+          </MenuItem>
         ))}
       </Menu>
     </div>

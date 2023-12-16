@@ -73,15 +73,19 @@ function DeleteModal({
 }
 
 const Categories = () => {
-  const { categoriesModalIsOpen, activeCategory, categories } = useSelector(
-    ({
-      app: { categoriesModalIsOpen, activeCategory, categories },
-    }: RootState) => ({
+  const { categoriesModalIsOpen } = useSelector(
+    ({ app: { categoriesModalIsOpen } }: RootState) => ({
       categoriesModalIsOpen,
-      activeCategory,
-      categories,
     })
   );
+  const { activeCategory } = useSelector(
+    ({ app: { activeCategory } }: RootState) => ({
+      activeCategory,
+    })
+  );
+  const { categories } = useSelector(({ app: { categories } }: RootState) => ({
+    categories,
+  }));
   const dispatch = useDispatch();
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState("");
