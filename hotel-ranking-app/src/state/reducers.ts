@@ -32,9 +32,9 @@ export interface State {
 
 export const getInitialState = (): State => ({
   hotelsInitial: [],
-  hotels: [],
+  hotels: JSON.parse(localStorage.getItem("hotels") as string) || [],
   countries: [],
-  categories: [
+  categories: JSON.parse(localStorage.getItem("categories") as string) || [
     { deletable: false, name: "1 Star", id: "1 Star" },
     { deletable: false, name: "2 Star", id: "2 Star" },
     { deletable: false, name: "3 Star", id: "3 Star" },
@@ -59,12 +59,14 @@ export const appSlice = createSlice({
           id: `${payload.name}-${payload.address}-${state.hotels.length}`,
         },
       ];
+      localStorage.setItem("hotels", JSON.stringify(state.hotels))
     },
     editHotel: (state, { payload }: PayloadAction<Hotel>) => {
       const filteredHotels = state.hotels.filter(
         (hotel) => hotel.id !== payload.id
       );
       state.hotels = [...filteredHotels, payload];
+      localStorage.setItem("hotels", JSON.stringify(state.hotels))
     },
     toggleHotelModal: (state) => {
       state.hotelModalIsOpen = !state.hotelModalIsOpen;
@@ -113,6 +115,7 @@ export const appSlice = createSlice({
         (hotel) => hotel.id !== payload
       );
       state.hotels = [...filteredHotels];
+      localStorage.setItem("hotels", JSON.stringify(state.hotels))
     },
     selectCategory: (state, { payload }: PayloadAction<Category>) => {
       if (payload.id === state.activeCategory.id) {
@@ -135,6 +138,7 @@ export const appSlice = createSlice({
         } else return category;
       });
       state.categories = [...mappedCategories];
+      localStorage.setItem("categories", JSON.stringify(state.categories))
     },
     addCategory: (state, { payload }: PayloadAction<Category>) => {
       state.categories = [
@@ -145,6 +149,7 @@ export const appSlice = createSlice({
           deletable: true,
         },
       ];
+      localStorage.setItem("categories", JSON.stringify(state.categories))
     },
     deleteCategory: (state, { payload }: PayloadAction<string>) => {
       const filteredHotels = state.hotels.filter(
@@ -157,6 +162,7 @@ export const appSlice = createSlice({
         (category) => category.id !== payload
       );
       state.categories = [...filteredCategories];
+      localStorage.setItem("categories", JSON.stringify(state.categories))
     },
     setCountries: (state, { payload }: PayloadAction<Array<Country>>) => {
       state.countries = [...payload];

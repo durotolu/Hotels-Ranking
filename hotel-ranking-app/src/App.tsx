@@ -64,7 +64,6 @@ function App() {
           </Stack>
           <Grid container spacing={4}>
             {hotels.map(({ name, country, address, id, category }, i) => {
-              console.log(filterBy);
               if (category !== filterBy && filterBy !== "") return null;
               return (
                 <Grid item key={i} xs={12} sm={6} md={4}>

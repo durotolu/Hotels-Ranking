@@ -49,7 +49,7 @@ export default function Filter() {
       >
         <MenuItem onClick={() => handleSelect("")}>All</MenuItem>
         {categories.map(({ name, id }) => (
-          <MenuItem onClick={() => handleSelect(id)}>{name}</MenuItem>
+          <MenuItem key={id} onClick={() => handleSelect(id)}>{name}</MenuItem>
         ))}
       </Menu>
     </div>

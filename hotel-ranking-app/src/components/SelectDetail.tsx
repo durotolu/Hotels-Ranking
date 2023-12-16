@@ -22,8 +22,8 @@ export default function UnstyledSelectIntroduction({
   return (
     <>
       <Label>{label}</Label>
-      <StyledButton name={name}>
-        <option value="" disabled selected>Select your option</option>
+      <StyledButton defaultValue={defaultValue} name={name}>
+        <option value="" disabled>Select your option</option>
         {options.map(({ id, name }) => {
           return (
             <option key={id} value={id} selected={defaultValue === id}>
@@ -73,6 +73,7 @@ const Select = React.forwardRef(function CustomSelect<
         boxShadow: "0px 2px 2px #F3F6F9",
       }}
       onChange={handleSelect}
+      defaultValue={props.defaultValue as string}
     >
       {props.children}
     </select>
