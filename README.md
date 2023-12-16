@@ -2,6 +2,7 @@
 Allows user maintain a list of hotels and group them by categories.
 
 > CRUD on hotels and categories.
+
 > Cascade changes.
 
 ## Built with ReactS, Material UI and Redux
