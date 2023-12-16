@@ -18,6 +18,7 @@ export interface Country {
 }
 
 export interface State {
+  hotelsInitial: Array<Hotel>;
   hotels: Array<Hotel>;
   categories: Array<Category>;
   countries: Array<Country>;
@@ -26,9 +27,11 @@ export interface State {
   activeCategory: Category;
   isEditMode: boolean;
   categoriesModalIsOpen: boolean;
+  filterBy: string;
 }
 
 export const getInitialState = (): State => ({
+  hotelsInitial: [],
   hotels: [],
   countries: [],
   categories: [
@@ -41,6 +44,7 @@ export const getInitialState = (): State => ({
   activeCategory: { id: "", deletable: false, name: "" },
   isEditMode: false,
   categoriesModalIsOpen: false,
+  filterBy: "",
 });
 
 export const appSlice = createSlice({
@@ -94,7 +98,6 @@ export const appSlice = createSlice({
       };
     },
     setSelectedHotel: (state, { payload }: PayloadAction<Hotel>) => {
-      console.log(payload)
       state.activeHotel = {
         ...payload,
       };
@@ -124,7 +127,6 @@ export const appSlice = createSlice({
     },
     editCategory: (state, { payload }: PayloadAction<Category>) => {
       const mappedCategories = state.categories.map((category) => {
-        console.log(category.id, payload.id);
         if (category.id === payload.id) {
           return {
             ...payload,
@@ -147,7 +149,6 @@ export const appSlice = createSlice({
     deleteCategory: (state, { payload }: PayloadAction<string>) => {
       const filteredHotels = state.hotels.filter(
         (hotel) => {
-          console.log(hotel.name, payload)
           return hotel.category !== payload
         }
       );
@@ -159,6 +160,9 @@ export const appSlice = createSlice({
     },
     setCountries: (state, { payload }: PayloadAction<Array<Country>>) => {
       state.countries = [...payload];
+    },
+    setFilter: (state, { payload }: PayloadAction<string>) => {
+      state.filterBy = payload
     },
   },
 });

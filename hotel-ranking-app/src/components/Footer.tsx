@@ -6,8 +6,8 @@ function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://github.com/durotolu">
+        Modurotolu Olokode
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -16,17 +16,9 @@ function Copyright() {
 }
 
 const Footer = () => (
-  <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+  <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer" position={"fixed"} bottom={"0"} width={"100%"}>
     <Typography variant="h6" align="center" gutterBottom>
       Footer
-    </Typography>
-    <Typography
-      variant="subtitle1"
-      align="center"
-      color="text.secondary"
-      component="p"
-    >
-      Something here to give the footer a purpose!
     </Typography>
     <Copyright />
   </Box>

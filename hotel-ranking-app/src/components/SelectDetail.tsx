@@ -1,11 +1,10 @@
 import * as React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { selectClasses, SelectProps } from "@mui/base/Select";
 import { styled } from "@mui/system";
 
 import { actions, Category, Country } from "../state/reducers";
 import Label from "./Label";
-import { RootState } from "../store";
 
 export default function UnstyledSelectIntroduction({
   label,
@@ -20,22 +19,18 @@ export default function UnstyledSelectIntroduction({
   defaultValue: string;
   options: Array<Category | Country>;
 }) {
-  const { activeHotel } = useSelector(
-    ({ app: { activeHotel } }: RootState) => ({
-      activeHotel,
-    })
-  );
   return (
     <>
       <Label>{label}</Label>
       <StyledButton name={name}>
+        <option value="" disabled selected>Select your option</option>
         {options.map(({ id, name }) => {
-          console.log(id, defaultValue)
-          return(
-          <option key={id} value={id} selected={defaultValue === id}>
-            {name}
-          </option>
-        )})}
+          return (
+            <option key={id} value={id} selected={defaultValue === id}>
+              {name}
+            </option>
+          );
+        })}
       </StyledButton>
       <p>{error}</p>
     </>

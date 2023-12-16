@@ -116,7 +116,6 @@ const AddHotel = () => {
   };
 
   const submitHotel = () => {
-    console.log("activeHotel", activeHotel);
     if (isEditMode) {
       dispatch(actions.editHotel(activeHotel));
     } else {
@@ -147,7 +146,6 @@ const AddHotel = () => {
 
               return r;
             }, []);
-            console.log(result);
             dispatch(actions.setCountries(Object.values(result)));
           })
           .catch((err) => {

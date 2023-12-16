@@ -33,17 +33,12 @@ const ListItem = styled("li")(({ theme }) => ({
 function DeleteModal({
   openDelete,
   setOpenDelete,
-  categoryId
+  categoryId,
 }: {
   openDelete: boolean;
   categoryId: string;
   setOpenDelete: Dispatch<SetStateAction<boolean>>;
 }) {
-  // const { activeCategory } = useSelector(
-  //   ({ app: { activeCategory } }: RootState) => ({
-  //     activeCategory,
-  //   })
-  // );
   const dispatch = useDispatch();
 
   const handleClose = () => {
@@ -65,7 +60,9 @@ function DeleteModal({
       >
         <Box sx={{ ...style, width: 200 }}>
           <h2 id="child-modal-title">Delete</h2>
-          <p id="child-modal-description">This will be removed as a category on existing hotels?</p>
+          <p id="child-modal-description">
+            This will be removed as a category on existing hotels?
+          </p>
           <Button variant="contained" color="error" onClick={deleteCategory}>
             Delete
           </Button>
@@ -76,16 +73,15 @@ function DeleteModal({
 }
 
 const Categories = () => {
-  const { categoriesModalIsOpen, activeCategory, categories } =
-    useSelector(
-      ({
-        app: { categoriesModalIsOpen, activeCategory, categories },
-      }: RootState) => ({
-        categoriesModalIsOpen,
-        activeCategory,
-        categories,
-      })
-    );
+  const { categoriesModalIsOpen, activeCategory, categories } = useSelector(
+    ({
+      app: { categoriesModalIsOpen, activeCategory, categories },
+    }: RootState) => ({
+      categoriesModalIsOpen,
+      activeCategory,
+      categories,
+    })
+  );
   const dispatch = useDispatch();
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState("");
@@ -105,7 +101,7 @@ const Categories = () => {
         actions.selectCategory({
           id: "",
           name: "",
-          deletable: true
+          deletable: true,
         })
       );
     dispatch(actions.toggleCategoriesModal());
@@ -122,7 +118,7 @@ const Categories = () => {
 
   const openDeleteModal = (categoryId: string) => {
     handleOpen();
-    setDeleteId(categoryId)
+    setDeleteId(categoryId);
   };
 
   const handleClickCategory = (category: Category) => {
@@ -203,7 +199,7 @@ const Categories = () => {
             </Button>
             <DeleteModal
               openDelete={openDelete}
-              categoryId ={deleteId}
+              categoryId={deleteId}
               setOpenDelete={setOpenDelete}
             />
           </Box>

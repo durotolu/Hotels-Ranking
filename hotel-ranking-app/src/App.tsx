@@ -16,11 +16,15 @@ import AddHotel from "./components/AddHotel";
 import Categories from "./components/Categories";
 import { actions } from "./state/reducers";
 import { Chip } from "@mui/material";
+import Filter from "./components/Filter";
 
 function App() {
-  const { hotels } = useSelector(({ app: { hotels } }: RootState) => ({
-    hotels,
-  }));
+  const { hotels, filterBy } = useSelector(
+    ({ app: { hotels, filterBy } }: RootState) => ({
+      hotels,
+      filterBy,
+    })
+  );
   const dispatch = useDispatch();
 
   const openEditHotelModal = ({
@@ -28,16 +32,18 @@ function App() {
     name,
     country,
     address,
-    category
+    category,
   }: {
     name: string;
     country: string;
     address: string;
     id: string;
-    category: string
+    category: string;
   }) => {
     dispatch(actions.setEditMode(true));
-    dispatch(actions.setSelectedHotel({ name, country, address, id, category }));
+    dispatch(
+      actions.setSelectedHotel({ name, country, address, id, category })
+    );
     dispatch(actions.toggleHotelModal());
   };
 
@@ -50,49 +56,59 @@ function App() {
             sx={{ pb: 4 }}
             direction="row"
             spacing={2}
-            justifyContent="center"
+            justifyContent="space-around"
           >
             <AddHotel />
             <Categories />
-            <Button variant="outlined">filter</Button>
+            <Filter />
           </Stack>
           <Grid container spacing={4}>
-            {hotels.map(({ name, country, address, id, category }, i) => (
-              <Grid item key={i} xs={12} sm={6} md={4}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <CardMedia
-                    component="div"
+            {hotels.map(({ name, country, address, id, category }, i) => {
+              console.log(filterBy);
+              if (category !== filterBy && filterBy !== "") return null;
+              return (
+                <Grid item key={i} xs={12} sm={6} md={4}>
+                  <Card
                     sx={{
-                      pt: "56.25%",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
                     }}
-                    image="https://source.unsplash.com/random?wallpapers"
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {name}
-                    </Typography>
-                    <Typography>{address}</Typography>
-                  </CardContent>
-                  <CardActions sx={{ justifyContent: "space-between" }}>
-                    <Chip label={country} style={{maxWidth: "74%"}} />
-                    <Button
-                      onClick={() =>
-                        openEditHotelModal({ name, country, address, id, category })
-                      }
-                      size="small"
-                    >
-                      Edit
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+                  >
+                    <CardMedia
+                      component="div"
+                      sx={{
+                        pt: "56.25%",
+                      }}
+                      image="https://source.unsplash.com/random?wallpapers"
+                    />
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        {name}
+                      </Typography>
+                      <Typography>{address}</Typography>
+                    </CardContent>
+                    <CardActions sx={{ justifyContent: "space-between" }}>
+                      <Chip label={country} style={{ maxWidth: "74%" }} />
+                      <Button
+                        onClick={() =>
+                          openEditHotelModal({
+                            name,
+                            country,
+                            address,
+                            id,
+                            category,
+                          })
+                        }
+                        size="small"
+                      >
+                        Edit
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              );
+            })}
           </Grid>
         </Container>
       </main>

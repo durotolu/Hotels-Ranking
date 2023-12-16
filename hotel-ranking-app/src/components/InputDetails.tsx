@@ -4,8 +4,6 @@ import { useFormControlContext } from "@mui/base/FormControl";
 import { Input, inputClasses } from "@mui/base/Input";
 
 import Label from "./Label";
-// import { RootState } from "../store";
-// import { useSelector } from "react-redux";
 
 const HelperText = styled((props: {}) => {
   const formControlContext = useFormControlContext();
@@ -75,22 +73,22 @@ const InputDetails = ({
   label: string;
   placeholder: string;
   required?: boolean;
-  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  handleChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  >;
 }) => {
-  // const { hotelModalIsOpen, activeHotel } = useSelector(
-  //   ({ app: { hotelModalIsOpen, activeHotel } }: RootState) => ({
-  //     hotelModalIsOpen,
-  //     activeHotel,
-  //   })
-  // );
-  
   return (
-  <>
-    <Label>{label}</Label>
-    <StyledInput onChange={handleChange} placeholder={placeholder} name={name} />
-    {required && <HelperText />}
-  </>
-)};
+    <>
+      <Label>{label}</Label>
+      <StyledInput
+        onChange={handleChange}
+        placeholder={placeholder}
+        name={name}
+      />
+      {required && <HelperText />}
+    </>
+  );
+};
 
 const blue = {
   100: "#DAECFF",
