@@ -59,7 +59,7 @@ function DeleteModal() {
       >
         <Box sx={{ ...style, width: 200 }}>
           <h2 id="child-modal-title">Delete</h2>
-          <p id="child-modal-description">Are you sure you want to delete?</p>
+          <p id="child-modal-description">Are you sure you want to delete <b>{activeHotel.name}</b>?</p>
           <Button variant="contained" color="error" onClick={deleteHotel}>
             Delete
           </Button>
@@ -172,7 +172,7 @@ const AddHotel = () => {
           </h2>
           <p id="parent-modal-description">All fields required</p>
 
-          <FormControl defaultValue={activeHotel.name} required>
+          <FormControl defaultValue={activeHotel.name ?? ""} required>
             <InputDetails
               placeholder="Enter name here"
               name="name"
@@ -187,7 +187,7 @@ const AddHotel = () => {
             error={error}
             defaultValue={activeHotel.country}
           />
-          <FormControl defaultValue={activeHotel.address} required>
+          <FormControl defaultValue={activeHotel.address ?? "ddd"} required>
             <InputDetails
               placeholder="Enter address here"
               name="address"

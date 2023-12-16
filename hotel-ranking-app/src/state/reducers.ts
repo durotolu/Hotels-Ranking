@@ -129,6 +129,16 @@ export const appSlice = createSlice({
       }
     },
     editCategory: (state, { payload }: PayloadAction<Category>) => {
+      const mappedHotels = state.hotels.map((hotel) => {
+        if (hotel.category === payload.id) {
+          return {
+            ...hotel,
+            category: payload.name,
+          };
+        } else return hotel;
+      });
+      state.hotels = [...mappedHotels];
+
       const mappedCategories = state.categories.map((category) => {
         if (category.id === payload.id) {
           return {
@@ -139,6 +149,7 @@ export const appSlice = createSlice({
       });
       state.categories = [...mappedCategories];
       localStorage.setItem("categories", JSON.stringify(state.categories))
+      localStorage.setItem("hotels", JSON.stringify(state.hotels))
     },
     addCategory: (state, { payload }: PayloadAction<Category>) => {
       state.categories = [
@@ -163,6 +174,7 @@ export const appSlice = createSlice({
       );
       state.categories = [...filteredCategories];
       localStorage.setItem("categories", JSON.stringify(state.categories))
+      localStorage.setItem("hotels", JSON.stringify(state.hotels))
     },
     setCountries: (state, { payload }: PayloadAction<Array<Country>>) => {
       state.countries = [...payload];

@@ -26,7 +26,7 @@ export default function UnstyledSelectIntroduction({
         <option value="" disabled>Select your option</option>
         {options.map(({ id, name }) => {
           return (
-            <option key={id} value={id} selected={defaultValue === id}>
+            <option key={id} value={id}>
               {name}
             </option>
           );
