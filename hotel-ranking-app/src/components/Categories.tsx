@@ -1,19 +1,16 @@
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
-import { actions } from "../state/reducers";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/base/FormControl";
 import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
-
-import InputDetails from "./InputDetails";
-import SelectDetail from "./SelectDetail";
-import { RootState } from "../store";
 import { Paper } from "@mui/material";
+
+import { Category, actions, getInitialState } from "../state/reducers";
+import InputDetails from "./InputDetails";
+import { RootState } from "../store";
 
 const style = {
   position: "absolute" as "absolute",
@@ -33,43 +30,43 @@ const ListItem = styled("li")(({ theme }) => ({
   margin: theme.spacing(0.5),
 }));
 
-function DeleteModal() {
-  const { activeHotel } = useSelector(
-    ({ app: { activeHotel } }: RootState) => ({
-      activeHotel,
-    })
-  );
+function DeleteModal({
+  openDelete,
+  setOpenDelete,
+  categoryId
+}: {
+  openDelete: boolean;
+  categoryId: string;
+  setOpenDelete: Dispatch<SetStateAction<boolean>>;
+}) {
+  // const { activeCategory } = useSelector(
+  //   ({ app: { activeCategory } }: RootState) => ({
+  //     activeCategory,
+  //   })
+  // );
   const dispatch = useDispatch();
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
-    setOpen(false);
+    setOpenDelete(false);
   };
 
-  const deleteHotel = () => {
+  const deleteCategory = () => {
     handleClose();
-    dispatch(actions.toggleHotelModal());
-    dispatch(actions.deleteHotel(activeHotel.id));
+    dispatch(actions.deleteCategory(categoryId));
   };
 
   return (
     <Fragment>
-      <Button color="error" onClick={handleOpen}>
-        Delete
-      </Button>
       <Modal
-        open={open}
+        open={openDelete}
         onClose={handleClose}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
         <Box sx={{ ...style, width: 200 }}>
           <h2 id="child-modal-title">Delete</h2>
-          <p id="child-modal-description">Are you sure you want to delete?</p>
-          <Button variant="contained" color="error" onClick={deleteHotel}>
+          <p id="child-modal-description">This will be removed as a category on existing hotels?</p>
+          <Button variant="contained" color="error" onClick={deleteCategory}>
             Delete
           </Button>
         </Box>
@@ -79,22 +76,23 @@ function DeleteModal() {
 }
 
 const Categories = () => {
-  const { categoriesModalIsOpen, activeHotel, isEditMode, categories } =
+  const { categoriesModalIsOpen, activeCategory, categories } =
     useSelector(
       ({
-        app: { categoriesModalIsOpen, activeHotel, isEditMode, categories },
+        app: { categoriesModalIsOpen, activeCategory, categories },
       }: RootState) => ({
         categoriesModalIsOpen,
-        activeHotel,
-        isEditMode,
+        activeCategory,
         categories,
       })
     );
   const dispatch = useDispatch();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
 
   const handleChange = (e: { target: { name: string; value: string } }) => {
     dispatch(
-      actions.inputChange({
+      actions.inputChangeCategory({
         name: e.target.name,
         value: e.target.value,
       })
@@ -104,34 +102,35 @@ const Categories = () => {
   const toggleCategoriesModalState = () => {
     if (!categoriesModalIsOpen)
       dispatch(
-        actions.setSelectedHotel({
+        actions.selectCategory({
           id: "",
           name: "",
-          country: "",
-          address: "",
+          deletable: true
         })
       );
-    dispatch(actions.setEditMode(false));
     dispatch(actions.toggleCategoriesModal());
   };
 
-  const submitHotel = () => {
-    console.log("isEditMode", isEditMode);
-    if (isEditMode) {
-      dispatch(actions.editHotel(activeHotel));
+  const submitCategory = () => {
+    if (activeCategory.id) {
+      dispatch(actions.editCategory(activeCategory));
     } else {
-      dispatch(actions.addHotel(activeHotel));
+      dispatch(actions.addCategory(activeCategory));
     }
-    dispatch(actions.toggleHotelModal());
+    dispatch(actions.selectCategory({ ...getInitialState().activeCategory }));
   };
 
-  const handleDelete = (category: any) => {
-    console.info("You clicked the delete icon.", category);
+  const openDeleteModal = (categoryId: string) => {
+    handleOpen();
+    setDeleteId(categoryId)
   };
 
-  const handleClickCategory = (category: any) => {
-    dispatch(actions.editCategory({ ...category, selected: !category.selected }));
-    console.info("You clicked the chip.", category);
+  const handleClickCategory = (category: Category) => {
+    dispatch(actions.selectCategory(category));
+  };
+
+  const handleOpen = () => {
+    setOpenDelete(true);
   };
 
   return (
@@ -160,15 +159,17 @@ const Categories = () => {
           >
             {categories.map((category) => {
               return (
-                <ListItem key={category.key}>
+                <ListItem key={category.id}>
                   <Chip
                     label={category.name}
                     color="primary"
-                    variant={category.selected ? "filled" : "outlined"}
+                    variant={
+                      category.id === activeCategory.id ? "filled" : "outlined"
+                    }
                     onClick={() => handleClickCategory(category)}
                     onDelete={
                       category.deletable
-                        ? () => handleDelete(category)
+                        ? () => openDeleteModal(category.id)
                         : undefined
                     }
                   />
@@ -176,14 +177,15 @@ const Categories = () => {
               );
             })}
           </Paper>
-
-          <InputDetails
-            placeholder="Enter name here"
-            name="name"
-            label="Name"
-            handleChange={handleChange}
-          />
-
+          <FormControl value={activeCategory.name} required>
+            <InputDetails
+              placeholder="Enter category here"
+              name="name"
+              label=""
+              required={false}
+              handleChange={handleChange}
+            />
+          </FormControl>
           <Box
             paddingTop={"20px"}
             display={"flex"}
@@ -191,18 +193,19 @@ const Categories = () => {
           >
             <Button
               variant="contained"
-              onClick={submitHotel}
+              onClick={submitCategory}
               type="submit"
-              disabled={
-                !activeHotel.name ||
-                !activeHotel.address ||
-                !activeHotel.country
-              }
+              disabled={!activeCategory.name}
             >
-              {isEditMode ? "Update" : "Create"}
+              {activeCategory.id
+                ? `Update ${activeCategory.id}`
+                : "Create Category"}
             </Button>
-            <DeleteModal />
-            {isEditMode && <DeleteModal />}
+            <DeleteModal
+              openDelete={openDelete}
+              categoryId ={deleteId}
+              setOpenDelete={setOpenDelete}
+            />
           </Box>
         </Box>
       </Modal>

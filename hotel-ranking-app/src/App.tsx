@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -10,14 +9,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-import "./App.css";
 import { RootState } from "./store";
-
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AddHotel from "./components/AddHotel";
 import Categories from "./components/Categories";
 import { actions } from "./state/reducers";
+import { Chip } from "@mui/material";
 
 function App() {
   const { hotels } = useSelector(({ app: { hotels } }: RootState) => ({
@@ -30,14 +28,16 @@ function App() {
     name,
     country,
     address,
+    category
   }: {
     name: string;
     country: string;
     address: string;
     id: string;
+    category: string
   }) => {
     dispatch(actions.setEditMode(true));
-    dispatch(actions.setSelectedHotel({ name, country, address, id }));
+    dispatch(actions.setSelectedHotel({ name, country, address, id, category }));
     dispatch(actions.toggleHotelModal());
   };
 
@@ -54,9 +54,10 @@ function App() {
           >
             <AddHotel />
             <Categories />
+            <Button variant="outlined">filter</Button>
           </Stack>
           <Grid container spacing={4}>
-            {hotels.map(({ name, country, address, id }, i) => (
+            {hotels.map(({ name, country, address, id, category }, i) => (
               <Grid item key={i} xs={12} sm={6} md={4}>
                 <Card
                   sx={{
@@ -79,10 +80,10 @@ function App() {
                     <Typography>{address}</Typography>
                   </CardContent>
                   <CardActions sx={{ justifyContent: "space-between" }}>
-                    <Button size="small">{country}</Button>
+                    <Chip label={country} style={{maxWidth: "74%"}} />
                     <Button
                       onClick={() =>
-                        openEditHotelModal({ name, country, address, id })
+                        openEditHotelModal({ name, country, address, id, category })
                       }
                       size="small"
                     >

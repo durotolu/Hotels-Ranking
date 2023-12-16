@@ -1,26 +1,43 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-
-import { actions } from "../state/reducers";
-import {
-  Select as BaseSelect,
-  selectClasses,
-  SelectProps,
-} from "@mui/base/Select";
+import { selectClasses, SelectProps } from "@mui/base/Select";
 import { styled } from "@mui/system";
 
+import { actions, Category, Country } from "../state/reducers";
 import Label from "./Label";
 import { RootState } from "../store";
 
-export default function UnstyledSelectIntroduction() {
+export default function UnstyledSelectIntroduction({
+  label,
+  options,
+  defaultValue,
+  error,
+  name,
+}: {
+  label: string;
+  name: string;
+  error?: string;
+  defaultValue: string;
+  options: Array<Category | Country>;
+}) {
+  const { activeHotel } = useSelector(
+    ({ app: { activeHotel } }: RootState) => ({
+      activeHotel,
+    })
+  );
   return (
     <>
-      <Label>Country</Label>
-      <StyledButton defaultValue={10}>
-        <option value={10}>Documentation</option>
-        <option value={20}>Components</option>
-        <option value={30}>Features</option>
+      <Label>{label}</Label>
+      <StyledButton name={name}>
+        {options.map(({ id, name }) => {
+          console.log(id, defaultValue)
+          return(
+          <option key={id} value={id} selected={defaultValue === id}>
+            {name}
+          </option>
+        )})}
       </StyledButton>
+      <p>{error}</p>
     </>
   );
 }
@@ -28,20 +45,18 @@ export default function UnstyledSelectIntroduction() {
 const Select = React.forwardRef(function CustomSelect<
   TValue extends {},
   Multiple extends boolean
->(
-  props: SelectProps<TValue, Multiple>,
-  ref: React.ForwardedRef<HTMLButtonElement>
-) {
-  // const { hotels } = useSelector(({ app: { hotels } }: RootState) => ({
-  //   hotels,
-  // }));
-  
+>(props: SelectProps<TValue, Multiple>) {
   const dispatch = useDispatch();
 
-  const handleSelect = (e: { target: { value: string } }) => {
+  const handleSelect = (e: {
+    target: {
+      name: string;
+      value: string;
+    };
+  }) => {
     dispatch(
-      actions.inputChange({
-        name: "country",
+      actions.inputChangeHotel({
+        name: props.name as string,
         value: e.target.value,
       })
     );

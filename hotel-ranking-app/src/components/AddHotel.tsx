@@ -1,12 +1,11 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
-import { actions } from "../state/reducers";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/base/FormControl";
 
+import { actions } from "../state/reducers";
 import InputDetails from "./InputDetails";
 import SelectDetail from "./SelectDetail";
 import { RootState } from "../store";
@@ -71,18 +70,30 @@ function DeleteModal() {
 }
 
 const AddHotel = () => {
-  const { hotelModalIsOpen, activeHotel, isEditMode } = useSelector(
-    ({ app: { hotelModalIsOpen, activeHotel, isEditMode } }: RootState) => ({
-      hotelModalIsOpen,
-      activeHotel,
-      isEditMode,
-    })
-  );
+  const { hotelModalIsOpen, activeHotel, isEditMode, categories, countries } =
+    useSelector(
+      ({
+        app: {
+          hotelModalIsOpen,
+          activeHotel,
+          isEditMode,
+          categories,
+          countries,
+        },
+      }: RootState) => ({
+        hotelModalIsOpen,
+        activeHotel,
+        isEditMode,
+        categories,
+        countries,
+      })
+    );
   const dispatch = useDispatch();
+  const [error, setError] = useState("");
 
   const handleChange = (e: { target: { name: string; value: string } }) => {
     dispatch(
-      actions.inputChange({
+      actions.inputChangeHotel({
         name: e.target.name,
         value: e.target.value,
       })
@@ -97,6 +108,7 @@ const AddHotel = () => {
           name: "",
           country: "",
           address: "",
+          category: "",
         })
       );
     dispatch(actions.setEditMode(false));
@@ -104,7 +116,7 @@ const AddHotel = () => {
   };
 
   const submitHotel = () => {
-    console.log("isEditMode", isEditMode);
+    console.log("activeHotel", activeHotel);
     if (isEditMode) {
       dispatch(actions.editHotel(activeHotel));
     } else {
@@ -113,10 +125,42 @@ const AddHotel = () => {
     dispatch(actions.toggleHotelModal());
   };
 
+  useEffect(() => {
+    if (!countries.length) {
+      (function () {
+        const apiCountries = `https://pkgstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json`;
+        fetch(apiCountries)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            const result = data.reduce(function (
+              r: { [x: string]: { id: string; name: string } },
+              a: {
+                country: string;
+              }
+            ) {
+              r[a.country] = {
+                id: a.country,
+                name: a.country,
+              };
+
+              return r;
+            }, []);
+            console.log(result);
+            dispatch(actions.setCountries(Object.values(result)));
+          })
+          .catch((err) => {
+            setError(err.message);
+          });
+      })();
+    }
+  }, [countries.length, dispatch]);
+
   return (
     <div>
       <Button variant="contained" onClick={toggleHotelModalState}>
-        Open modal
+        New Hotel
       </Button>
       <Modal
         open={hotelModalIsOpen}
@@ -130,21 +174,35 @@ const AddHotel = () => {
           </h2>
           <p id="parent-modal-description">All fields required</p>
 
-          <InputDetails
-            placeholder="Enter name here"
-            name="name"
-            label="Name"
-            handleChange={handleChange}
+          <FormControl defaultValue={activeHotel.name} required>
+            <InputDetails
+              placeholder="Enter name here"
+              name="name"
+              label="Name"
+              handleChange={handleChange}
+            />
+          </FormControl>
+          <SelectDetail
+            label="Country"
+            name="country"
+            options={countries}
+            error={error}
+            defaultValue={activeHotel.country}
           />
-
-          <SelectDetail />
-          <InputDetails
-            placeholder="Enter address here"
-            name="address"
-            label="Address"
-            handleChange={handleChange}
+          <FormControl defaultValue={activeHotel.address} required>
+            <InputDetails
+              placeholder="Enter address here"
+              name="address"
+              label="Address"
+              handleChange={handleChange}
+            />
+          </FormControl>
+          <SelectDetail
+            name="category"
+            label="Category"
+            options={categories}
+            defaultValue={activeHotel.category}
           />
-
           <Box
             paddingTop={"20px"}
             display={"flex"}
