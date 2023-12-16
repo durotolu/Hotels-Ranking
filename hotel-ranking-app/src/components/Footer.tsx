@@ -16,10 +16,14 @@ function Copyright() {
 }
 
 const Footer = () => (
-  <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer" position={"fixed"} bottom={"0"} width={"100%"}>
-    <Typography variant="h6" align="center" gutterBottom>
-      Footer
-    </Typography>
+  <Box
+    sx={{ bgcolor: "background.paper", p: 2 }}
+    component="footer"
+    position={"fixed"}
+    bottom={"0"}
+    left={"50%"}
+    style={{ transform: "translate(-50%, 0)" }}
+  >
     <Copyright />
   </Box>
 );
