@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -12,24 +12,33 @@ import Container from "@mui/material/Container";
 
 import "./App.css";
 import { RootState } from "./store";
-import { actions } from "./state/reducers";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AddHotel from "./components/AddHotel";
+import Categories from "./components/Categories";
+import { actions } from "./state/reducers";
 
 function App() {
   const { hotels } = useSelector(({ app: { hotels } }: RootState) => ({
     hotels,
   }));
-
-  console.log("hotels", hotels);
-
   const dispatch = useDispatch();
 
-  const handleClick = () => {
-    console.log("handleClick");
-    dispatch(actions.click("coords"));
+  const openEditHotelModal = ({
+    id,
+    name,
+    country,
+    address,
+  }: {
+    name: string;
+    country: string;
+    address: string;
+    id: string;
+  }) => {
+    dispatch(actions.setEditMode(true));
+    dispatch(actions.setSelectedHotel({ name, country, address, id }));
+    dispatch(actions.toggleHotelModal());
   };
 
   return (
@@ -44,9 +53,10 @@ function App() {
             justifyContent="center"
           >
             <AddHotel />
+            <Categories />
           </Stack>
           <Grid container spacing={4}>
-            {hotels.map(({ name, country, address }, i) => (
+            {hotels.map(({ name, country, address, id }, i) => (
               <Grid item key={i} xs={12} sm={6} md={4}>
                 <Card
                   sx={{
@@ -70,7 +80,14 @@ function App() {
                   </CardContent>
                   <CardActions sx={{ justifyContent: "space-between" }}>
                     <Button size="small">{country}</Button>
-                    <Button size="small">Edit</Button>
+                    <Button
+                      onClick={() =>
+                        openEditHotelModal({ name, country, address, id })
+                      }
+                      size="small"
+                    >
+                      Edit
+                    </Button>
                   </CardActions>
                 </Card>
               </Grid>

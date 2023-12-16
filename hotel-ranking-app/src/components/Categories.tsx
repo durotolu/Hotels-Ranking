@@ -6,10 +6,14 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/base/FormControl";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
 
 import InputDetails from "./InputDetails";
 import SelectDetail from "./SelectDetail";
 import { RootState } from "../store";
+import { Paper } from "@mui/material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -24,6 +28,10 @@ const style = {
   px: 4,
   pb: 3,
 };
+
+const ListItem = styled("li")(({ theme }) => ({
+  margin: theme.spacing(0.5),
+}));
 
 function DeleteModal() {
   const { activeHotel } = useSelector(
@@ -70,14 +78,18 @@ function DeleteModal() {
   );
 }
 
-const AddHotel = () => {
-  const { hotelModalIsOpen, activeHotel, isEditMode } = useSelector(
-    ({ app: { hotelModalIsOpen, activeHotel, isEditMode } }: RootState) => ({
-      hotelModalIsOpen,
-      activeHotel,
-      isEditMode,
-    })
-  );
+const Categories = () => {
+  const { categoriesModalIsOpen, activeHotel, isEditMode, categories } =
+    useSelector(
+      ({
+        app: { categoriesModalIsOpen, activeHotel, isEditMode, categories },
+      }: RootState) => ({
+        categoriesModalIsOpen,
+        activeHotel,
+        isEditMode,
+        categories,
+      })
+    );
   const dispatch = useDispatch();
 
   const handleChange = (e: { target: { name: string; value: string } }) => {
@@ -89,8 +101,8 @@ const AddHotel = () => {
     );
   };
 
-  const toggleHotelModalState = () => {
-    if (!hotelModalIsOpen)
+  const toggleCategoriesModalState = () => {
+    if (!categoriesModalIsOpen)
       dispatch(
         actions.setSelectedHotel({
           id: "",
@@ -100,7 +112,7 @@ const AddHotel = () => {
         })
       );
     dispatch(actions.setEditMode(false));
-    dispatch(actions.toggleHotelModal());
+    dispatch(actions.toggleCategoriesModal());
   };
 
   const submitHotel = () => {
@@ -113,35 +125,62 @@ const AddHotel = () => {
     dispatch(actions.toggleHotelModal());
   };
 
+  const handleDelete = (category: any) => {
+    console.info("You clicked the delete icon.", category);
+  };
+
+  const handleClickCategory = (category: any) => {
+    dispatch(actions.editCategory({ ...category, selected: !category.selected }));
+    console.info("You clicked the chip.", category);
+  };
+
   return (
     <div>
-      <Button variant="contained" onClick={toggleHotelModalState}>
-        Open modal
+      <Button variant="contained" onClick={toggleCategoriesModalState}>
+        Manage Categories
       </Button>
       <Modal
-        open={hotelModalIsOpen}
-        onClose={toggleHotelModalState}
+        open={categoriesModalIsOpen}
+        onClose={toggleCategoriesModalState}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
         <Box sx={{ ...style, width: 400 }}>
-          <h2 id="parent-modal-title">
-            {isEditMode ? "Edit existing" : "Add new"} Hotel
-          </h2>
-          <p id="parent-modal-description">All fields required</p>
+          <h2 id="parent-modal-title">Manage Categories here</h2>
+          <Paper
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              listStyle: "none",
+              p: 0.5,
+              m: 0,
+            }}
+            component="ul"
+          >
+            {categories.map((category) => {
+              return (
+                <ListItem key={category.key}>
+                  <Chip
+                    label={category.name}
+                    color="primary"
+                    variant={category.selected ? "filled" : "outlined"}
+                    onClick={() => handleClickCategory(category)}
+                    onDelete={
+                      category.deletable
+                        ? () => handleDelete(category)
+                        : undefined
+                    }
+                  />
+                </ListItem>
+              );
+            })}
+          </Paper>
 
           <InputDetails
             placeholder="Enter name here"
             name="name"
             label="Name"
-            handleChange={handleChange}
-          />
-
-          <SelectDetail />
-          <InputDetails
-            placeholder="Enter address here"
-            name="address"
-            label="Address"
             handleChange={handleChange}
           />
 
@@ -162,6 +201,7 @@ const AddHotel = () => {
             >
               {isEditMode ? "Update" : "Create"}
             </Button>
+            <DeleteModal />
             {isEditMode && <DeleteModal />}
           </Box>
         </Box>
@@ -170,4 +210,4 @@ const AddHotel = () => {
   );
 };
 
-export default AddHotel;
+export default Categories;

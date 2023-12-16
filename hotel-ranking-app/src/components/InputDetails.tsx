@@ -1,51 +1,11 @@
 import * as React from "react";
 import { styled } from "@mui/system";
-import clsx from "clsx";
 import { FormControl, useFormControlContext } from "@mui/base/FormControl";
 import { Input, inputClasses } from "@mui/base/Input";
 
-const Label = styled(
-  ({
-    children,
-    className,
-  }: {
-    children?: React.ReactNode;
-    className?: string;
-  }) => {
-    const formControlContext = useFormControlContext();
-    const [dirty, setDirty] = React.useState(false);
-
-    React.useEffect(() => {
-      if (formControlContext?.filled) {
-        setDirty(true);
-      }
-    }, [formControlContext]);
-
-    if (formControlContext === undefined) {
-      return <p>{children}</p>;
-    }
-
-    const { error, required, filled } = formControlContext;
-    const showRequiredError = dirty && required && !filled;
-
-    return (
-      <p
-        className={clsx(className, error || showRequiredError ? "invalid" : "")}
-      >
-        {children}
-        {required ? " *" : ""}
-      </p>
-    );
-  }
-)`
-  font-family: "IBM Plex Sans", sans-serif;
-  font-size: 0.875rem;
-  margin-bottom: 4px;
-
-  &.invalid {
-    color: red;
-  }
-`;
+import Label from "./Label";
+import { RootState } from "../store";
+import { useSelector } from "react-redux";
 
 const HelperText = styled((props: {}) => {
   const formControlContext = useFormControlContext();
@@ -68,6 +28,7 @@ const HelperText = styled((props: {}) => {
 })`
   font-family: "IBM Plex Sans", sans-serif;
   font-size: 0.875rem;
+  color: red;
 `;
 
 const StyledInput = styled(Input)(
@@ -103,13 +64,31 @@ const StyledInput = styled(Input)(
 `
 );
 
-const InputDetails = ({ label, placeholder }: { label: string, placeholder: string }) => (
-  <FormControl defaultValue="" required>
+const InputDetails = ({
+  name,
+  label,
+  placeholder,
+  handleChange,
+}: {
+  name: string;
+  label: string;
+  placeholder: string;
+  handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+}) => {
+  const { hotelModalIsOpen, activeHotel } = useSelector(
+    ({ app: { hotelModalIsOpen, activeHotel } }: RootState) => ({
+      hotelModalIsOpen,
+      activeHotel,
+    })
+  );
+  
+  return (
+  <FormControl defaultValue={activeHotel[name]} required>
     <Label>{label}</Label>
-    <StyledInput placeholder={placeholder} />
+    <StyledInput onChange={handleChange} placeholder={placeholder} name={name} />
     <HelperText />
   </FormControl>
-);
+)};
 
 const blue = {
   100: "#DAECFF",
